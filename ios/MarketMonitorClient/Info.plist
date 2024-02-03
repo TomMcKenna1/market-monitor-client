@@ -48,5 +48,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses bluetooth to communicate with your MarketMonitor device.</string>
 </dict>
 </plist>
