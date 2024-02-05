@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -15,8 +15,9 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import BleManager from 'react-native-ble-manager';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+
+import BleManager from 'react-native-ble-manager';
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -24,8 +25,9 @@ const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const peripherals = new Map();
   const [devices, setDevices] = useState<any[]>([]);
+
+  const peripherals = new Map();
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -34,20 +36,18 @@ const App = () => {
     if (Platform.OS === 'android' && Platform.Version >= 23) {
       await BleManager.enableBluetooth();
       const fineLocationAccess = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
 
       if (fineLocationAccess) {
         console.log('Fine location access already enabled');
-      } 
-      else {
+      } else {
         const fineLocationAccessRequest = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         );
         if (fineLocationAccessRequest) {
           console.log('Fine location access allowed');
-        } 
-        else {
+        } else {
           console.log('Fine location access refused');
         }
       }
@@ -57,29 +57,25 @@ const App = () => {
   async function handleScanResult() {
     const discoveredPeripherals = await BleManager.getDiscoveredPeripherals();
     if (discoveredPeripherals.length === 0) {
-      console.log('No bluetooth devices found')
-    }
-    else {
+      console.log('No bluetooth devices found');
+    } else {
       for (let i = 0; i < discoveredPeripherals.length; i++) {
         let peripheral = discoveredPeripherals[i];
         peripherals.set(peripheral.id, peripheral);
       }
-      console.log(Array.from(peripherals.values()))
+      console.log(Array.from(peripherals.values()));
       // setDevices(Array.from(peripherals.values()));
     }
   }
 
   async function initialiseBleManager() {
-    BleManagerEmitter.addListener(
-      'BleManagerStopScan',
-      () => {
-        setIsScanning(false);
-        console.log('Scanning stopped');
-        handleScanResult();
-      }
-    )
+    BleManagerEmitter.addListener('BleManagerStopScan', () => {
+      setIsScanning(false);
+      console.log('Scanning stopped');
+      handleScanResult();
+    });
     await BleManager.start({showAlert: false});
-    console.log('Bluetooth manager initialised')
+    console.log('Bluetooth manager initialised');
   }
 
   async function startScan() {
@@ -88,8 +84,7 @@ const App = () => {
         await BleManager.scan([], 5, true);
         console.log('Scanning...');
         setIsScanning(true);
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error);
       }
     }
@@ -98,7 +93,7 @@ const App = () => {
   useEffect(() => {
     requestPermissions();
     initialiseBleManager();
-  }, [])
+  }, []);
 
   return (
     <SafeAreaView style={[backgroundStyle, styles.mainBody]}>
@@ -125,18 +120,21 @@ const App = () => {
               React Native BLE Manager Tutorial
             </Text>
           </View>
-          <TouchableOpacity 
-            activeOpacity={0.5} 
+          <TouchableOpacity
+            activeOpacity={0.5}
             style={styles.buttonStyle}
-            onPress={startScan}
-          >
+            onPress={startScan}>
             <Text style={styles.buttonTextStyle}>
               {isScanning ? 'Scanning...' : 'Scan for MarketMonitor devices'}
             </Text>
             {devices.length > 0 ? (
               <FlatList
                 data={devices}
-                renderItem={({item}) => <Text style={styles.buttonTextStyle}>{item.name}:{item.rssi}</Text>}
+                renderItem={({item}) => (
+                  <Text style={styles.buttonTextStyle}>
+                    {item.name}:{item.rssi}
+                  </Text>
+                )}
                 keyExtractor={item => item.id}
               />
             ) : (
