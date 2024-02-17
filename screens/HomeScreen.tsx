@@ -19,8 +19,8 @@ import DeviceButton from '../components/DeviceButton.tsx';
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-const HomeScreen = (props) => {
-  const {navigation} = props
+const HomeScreen = props => {
+  const {navigation} = props;
   const isDarkMode = useColorScheme() === 'dark';
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [devices, setDevices] = useState<any[]>([]);
@@ -123,8 +123,14 @@ const HomeScreen = (props) => {
             style={{
               marginBottom: 40,
             }}>
-            <DeviceButton title="Home - Study" deviceName="3.4in Market Monitor"/>
-            <DeviceButton title="Office - Desk" deviceName="3.4in Market Monitor"/>
+            <DeviceButton
+              title="Home - Study"
+              deviceName="3.4in Market Monitor"
+            />
+            <DeviceButton
+              title="Office - Desk"
+              deviceName="3.4in Market Monitor"
+            />
           </View>
         </ScrollView>
         <View
@@ -155,7 +161,7 @@ const HomeScreen = (props) => {
             }}
             iconColor={isDarkMode ? '#2B2C28' : '#FFFAFB'}
             loading={false}
-            onPress={() => navigation.navigate("AddDevice")}
+            onPress={() => navigation.navigate('AddDevice')}
           />
         </View>
       </View>
