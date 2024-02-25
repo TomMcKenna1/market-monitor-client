@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import BleManager, {Peripheral} from 'react-native-ble-manager';
 import {useEffect, useState} from 'react';
-
+import Device from '../device.js';
 import TextButton from '../components/TextButton.tsx';
 
 const BleManagerModule = NativeModules.BleManager;
@@ -122,9 +122,20 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
       ) : discoveredPeripherals.length > 0 ? (
         <>
           {discoveredPeripherals.map(peripheral => (
-            <Text>
-              {peripheral.name} - {peripheral.id}
-            </Text>
+            <TextButton
+              text='3.4" Market Monitor'
+              onPress={() =>
+                addDevice(
+                  new Device(
+                    'Home',
+                    'Study',
+                    '3.4" Market Monitor',
+                    true,
+                    peripheral.id,
+                  ),
+                )
+              }
+            />
           ))}
         </>
       ) : (
