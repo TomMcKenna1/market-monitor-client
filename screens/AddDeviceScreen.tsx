@@ -66,8 +66,11 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
     BleManagerEmitter.removeAllListeners('BleManagerStopScan');
 
     const _discoveredPeripherals = await BleManager.getDiscoveredPeripherals();
-    setDiscoveredPeripherals(_discoveredPeripherals);
-    console.log(Array.from(peripherals.values()));
+    setDiscoveredPeripherals(
+      _discoveredPeripherals.filter(peripheral =>
+        peripheral.name?.includes('marketmonitor'),
+      ),
+    );
   }
 
   async function startScan() {
@@ -119,7 +122,9 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
       ) : discoveredPeripherals.length > 0 ? (
         <>
           {discoveredPeripherals.map(peripheral => (
-            <Text>{peripheral.name} - {peripheral.id}</Text>
+            <Text>
+              {peripheral.name} - {peripheral.id}
+            </Text>
           ))}
         </>
       ) : (
