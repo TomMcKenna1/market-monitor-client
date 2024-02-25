@@ -11,14 +11,13 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import BleManager, {Peripheral} from 'react-native-ble-manager';
 import {useEffect, useState} from 'react';
-import Device from '../device.js';
 import TextButton from '../components/TextButton.tsx';
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const AddDeviceScreen = props => {
-  const {navigation, addDevice} = props;
+  const {navigation} = props;
   const [permissionsEnabled, setPermissionsEnabled] = useState(false);
 
   async function checkPermissions() {
@@ -41,7 +40,7 @@ const AddDeviceScreen = props => {
   return (
     <SafeAreaView style={{flex: 1}}>
       {permissionsEnabled ? (
-        <DeviceSearchPage addDevice={addDevice} />
+        <DeviceSearchPage navigation={navigation} />
       ) : (
         <LocationPermissionPage onNext={() => setPermissionsEnabled(true)} />
       )}
@@ -50,13 +49,12 @@ const AddDeviceScreen = props => {
 };
 
 interface DeviceSearchPageProps {
-  addDevice: CallableFunction;
+  navigation: CallableFunction;
 }
 
 const DeviceSearchPage = (props: DeviceSearchPageProps) => {
-  const {addDevice} = props;
+  const {navigation} = props;
 
-  const peripherals = new Map();
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [discoveredPeripherals, setDiscoveredPeripherals] = useState<
     Peripheral[]
@@ -124,17 +122,11 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
           {discoveredPeripherals.map(peripheral => (
             <TextButton
               text='3.4" Market Monitor'
-              onPress={() =>
-                addDevice(
-                  new Device(
-                    'Home',
-                    'Study',
-                    '3.4" Market Monitor',
-                    true,
-                    peripheral.id,
-                  ),
-                )
-              }
+              onPress={() => {
+                navigation.navigate('InitDevice', {
+                  peripheral: peripheral,
+                });
+              }}
             />
           ))}
         </>

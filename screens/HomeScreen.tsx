@@ -84,7 +84,6 @@ const HomeScreen = props => {
   );
 };
 
-const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: '#307ecc',
