@@ -4,14 +4,14 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from 'react-native';
+import Device from '../device.js'
 
 interface DeviceButtonProps extends TouchableOpacityProps {
-  title: string;
-  deviceName: string;
+  device: Device;
 }
 
 const DeviceButton = (props: DeviceButtonProps) => {
-  const {title, deviceName, ...other} = props;
+  const {device, ...other} = props;
   return (
     <TouchableOpacity activeOpacity={0.75} style={{padding: 15}} {...other}>
       <View
@@ -31,14 +31,14 @@ const DeviceButton = (props: DeviceButtonProps) => {
         }}>
         <View style={{flex: 1}}>
           <Text style={{padding: 10, fontWeight: '400', fontSize: 25}}>
-            {title}
+            {device.home} - {device.room}
           </Text>
           <Text
             style={{paddingLeft: 10, paddingRight: 10, fontWeight: '400', fontSize: 15, color: 'lightgray'}}>
-            {deviceName}
+            {device.type}
           </Text>
         </View>
-        <View style={{backgroundColor: "green", width: 10, height: 10, margin: 20, borderRadius: 20}}/>
+        <View style={{backgroundColor: device.connected ? "green" : "red", width: 10, height: 10, margin: 20, borderRadius: 20}}/>
       </View>
     </TouchableOpacity>
   );

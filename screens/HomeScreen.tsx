@@ -1,26 +1,23 @@
-import {useEffect, useState} from 'react';
 import {
   Dimensions,
-  NativeEventEmitter,
-  NativeModules,
-  PermissionsAndroid,
-  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
+  Text,
   View,
   useColorScheme,
 } from 'react-native';
-import BleManager from 'react-native-ble-manager';
 import IconButton from '../components/IconButton.tsx';
 import DeviceButton from '../components/DeviceButton.tsx';
 
+import Device from '../device.js';
+
 const HomeScreen = props => {
-  const {navigation} = props;
+  const {navigation, devices} = props;
+
   const isDarkMode = useColorScheme() === 'dark';
 
-  
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#131515' : '#FFFAFB',
   };
@@ -36,14 +33,19 @@ const HomeScreen = props => {
             style={{
               marginBottom: 40,
             }}>
-            <DeviceButton
-              title="Home - Study"
-              deviceName="3.4in Market Monitor"
-            />
-            <DeviceButton
-              title="Office - Desk"
-              deviceName="3.4in Market Monitor"
-            />
+            {devices.length > 0 ? (
+              devices.map((device: Device) => <DeviceButton device={device} />)
+            ) : (
+              <Text
+                style={{
+                  padding: 100,
+                  textAlign: 'center',
+                  fontSize: 30,
+                  color: 'lightgray',
+                }}>
+                No devices
+              </Text>
+            )}
           </View>
         </ScrollView>
         <View
