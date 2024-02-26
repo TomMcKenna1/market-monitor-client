@@ -12,12 +12,15 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import BleManager, {Peripheral} from 'react-native-ble-manager';
 import {useEffect, useState} from 'react';
 import TextButton from '../components/TextButton.tsx';
+import {useNavigation} from '@react-navigation/native';
+import { NavigationProps } from '../App.tsx';
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-const AddDeviceScreen = props => {
-  const {navigation} = props;
+const AddDeviceScreen = () => {
+  const navigation = useNavigation<NavigationProps>();
+
   const [permissionsEnabled, setPermissionsEnabled] = useState(false);
 
   async function checkPermissions() {
@@ -49,7 +52,7 @@ const AddDeviceScreen = props => {
 };
 
 interface DeviceSearchPageProps {
-  navigation: CallableFunction;
+  navigation: NavigationProps;
 }
 
 const DeviceSearchPage = (props: DeviceSearchPageProps) => {

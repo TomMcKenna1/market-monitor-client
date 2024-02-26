@@ -12,9 +12,17 @@ import IconButton from '../components/IconButton.tsx';
 import DeviceButton from '../components/DeviceButton.tsx';
 
 import Device from '../device.js';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '../App.tsx';
 
-const HomeScreen = props => {
-  const {navigation, devices} = props;
+interface HomeScreenProps {
+  devices: Device[];
+}
+
+const HomeScreen = (props: HomeScreenProps) => {
+  const {devices} = props;
+
+  const navigation = useNavigation<NavigationProps>();
 
   const isDarkMode = useColorScheme() === 'dark';
 

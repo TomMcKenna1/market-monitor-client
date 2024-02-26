@@ -1,7 +1,12 @@
+import { useRoute } from "@react-navigation/native";
 import { SafeAreaView, Text, View } from "react-native";
 
-const InitDeviceScreen = props => {
-  const {navigation, route, addDevice} = props;
+interface InitDeviceScreenProps {
+  addDevice: CallableFunction;
+}
+const InitDeviceScreen = (props: InitDeviceScreenProps) => {
+  const {addDevice} = props;
+  const route = useRoute();
   const {peripheral} = route.params;
 
   return (

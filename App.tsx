@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import AddDeviceScreen from './screens/AddDeviceScreen';
 import InitDeviceScreen from './screens/InitDeviceScreen';
 
-import BleManager from 'react-native-ble-manager';
+import BleManager, {Peripheral} from 'react-native-ble-manager';
 import Device from './device.js';
 
 const Stack = createNativeStackNavigator();
@@ -29,9 +32,9 @@ const App = () => {
         </Stack.Screen>
         <Stack.Screen
           name="AddDevice"
-          options={{title: 'Add Device', gestureDirection: 'vertical'}}>
-          {props => <AddDeviceScreen {...props} />}
-        </Stack.Screen>
+          options={{title: 'Add Device', gestureDirection: 'vertical'}}
+          component={AddDeviceScreen}
+        />
         <Stack.Screen name="InitDevice" options={{title: 'Initiate Device'}}>
           {props => <InitDeviceScreen {...props} addDevice={addDevice} />}
         </Stack.Screen>
@@ -39,5 +42,13 @@ const App = () => {
     </NavigationContainer>
   );
 };
+
+type StackParamList = {
+  Home: {devices: Device[]};
+  AddDevice: undefined;
+  InitDevice: {peripheral: Peripheral};
+};
+
+export type NavigationProps = NativeStackNavigationProp<StackParamList>;
 
 export default App;
