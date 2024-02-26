@@ -1,5 +1,4 @@
 import {
-  Dimensions,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -84,7 +83,7 @@ const HomeScreen = (props: HomeScreenProps) => {
             }}
             iconColor={isDarkMode ? '#2B2C28' : '#FFFAFB'}
             loading={false}
-            onPress={() => navigation.navigate('AddDevice')}
+            onPress={() => navigation.navigate('InitDevice', {peripheral: {name:"test", id:"123"}})} //Temporary for dev purposes
           />
         </View>
       </View>

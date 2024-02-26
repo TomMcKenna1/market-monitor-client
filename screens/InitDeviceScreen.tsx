@@ -1,5 +1,6 @@
-import { useRoute } from "@react-navigation/native";
-import { SafeAreaView, Text, View } from "react-native";
+import {useRoute} from '@react-navigation/native';
+import {SafeAreaView, Text, TextInput, View} from 'react-native';
+import RoundTextInput from '../components/RoundTextInput';
 
 interface InitDeviceScreenProps {
   addDevice: CallableFunction;
@@ -11,20 +12,13 @@ const InitDeviceScreen = (props: InitDeviceScreenProps) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View style={{flex: 1}}>
-        <View
-          style={{
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-            padding: 15,
-            zIndex: 1,
-          }}>
-          <Text>Test Init : {peripheral.id}</Text>
-        </View>
+      <View style={{flex: 1, padding: 70, alignItems: 'center'}}>
+        <Text>Test Init : {peripheral.id}</Text>
+        <RoundTextInput placeholder="Home" />
+        <RoundTextInput placeholder="Room" />
       </View>
     </SafeAreaView>
   );
 };
 
-export default InitDeviceScreen
+export default InitDeviceScreen;
