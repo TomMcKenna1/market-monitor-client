@@ -42,7 +42,6 @@ const App = () => {
 type StackParamList = {
   Home: {devices: Device[]};
   AddDevice: undefined;
-  InitDevice: {peripheral: Peripheral};
 };
 
 export type NavigationProps = NativeStackNavigationProp<StackParamList>;
