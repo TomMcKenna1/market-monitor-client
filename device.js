@@ -1,7 +1,6 @@
 class Device {
-    constructor(home, room, type, connected, uuid) {
-        this.home = home;
-        this.room = room;
+    constructor(name, type, connected, uuid) {
+        this.name = name;
         this.type = type;
         this.connected = connected;
         this.uuid = uuid;

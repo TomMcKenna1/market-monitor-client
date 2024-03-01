@@ -13,12 +13,18 @@ import BleManager, {Peripheral} from 'react-native-ble-manager';
 import {useEffect, useState} from 'react';
 import TextButton from '../components/TextButton.tsx';
 import {useNavigation} from '@react-navigation/native';
-import { NavigationProps } from '../App.tsx';
+import {NavigationProps} from '../App.tsx';
+import Device from '../device.js';
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-const AddDeviceScreen = () => {
+interface AddDeviceScreenProps {
+  addDevice: CallableFunction;
+}
+
+const AddDeviceScreen = (props: AddDeviceScreenProps) => {
+  const {addDevice} = props;
   const navigation = useNavigation<NavigationProps>();
 
   const [permissionsEnabled, setPermissionsEnabled] = useState(false);
@@ -36,6 +42,11 @@ const AddDeviceScreen = () => {
     }
   }
 
+  function registerPeripheral(peripheral: Peripheral) {
+    const device = new Device("test", "3.4\" Market Monitor", false, peripheral.id);
+    addDevice(device);
+  }
+
   useEffect(() => {
     checkPermissions();
   }, []);
@@ -43,7 +54,7 @@ const AddDeviceScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       {permissionsEnabled ? (
-        <DeviceSearchPage navigation={navigation} />
+        <DeviceSearchPage navigation={navigation} onRegisterPeripheral={registerPeripheral}/>
       ) : (
         <LocationPermissionPage onNext={() => setPermissionsEnabled(true)} />
       )}
@@ -53,10 +64,11 @@ const AddDeviceScreen = () => {
 
 interface DeviceSearchPageProps {
   navigation: NavigationProps;
+  onRegisterPeripheral: CallableFunction;
 }
 
 const DeviceSearchPage = (props: DeviceSearchPageProps) => {
-  const {navigation} = props;
+  const {navigation, onRegisterPeripheral} = props;
 
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [discoveredPeripherals, setDiscoveredPeripherals] = useState<
@@ -126,9 +138,7 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
             <TextButton
               text='3.4" Market Monitor'
               onPress={() => {
-                navigation.navigate('InitDevice', {
-                  peripheral: peripheral,
-                });
+                onRegisterPeripheral(peripheral);
               }}
             />
           ))}

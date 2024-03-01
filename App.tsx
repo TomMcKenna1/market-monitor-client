@@ -6,7 +6,6 @@ import {
 } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import AddDeviceScreen from './screens/AddDeviceScreen';
-import InitDeviceScreen from './screens/InitDeviceScreen';
 
 import BleManager, {Peripheral} from 'react-native-ble-manager';
 import Device from './device.js';
@@ -32,11 +31,8 @@ const App = () => {
         </Stack.Screen>
         <Stack.Screen
           name="AddDevice"
-          options={{title: 'Add Device', gestureDirection: 'vertical'}}
-          component={AddDeviceScreen}
-        />
-        <Stack.Screen name="InitDevice" options={{title: 'Initiate Device'}}>
-          {props => <InitDeviceScreen {...props} addDevice={addDevice} />}
+          options={{title: 'Add Device', gestureDirection: 'vertical'}}>
+          {props => <AddDeviceScreen {...props} addDevice={addDevice} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
