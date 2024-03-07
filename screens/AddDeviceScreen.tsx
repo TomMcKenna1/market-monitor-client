@@ -45,6 +45,7 @@ const AddDeviceScreen = (props: AddDeviceScreenProps) => {
   function registerPeripheral(peripheral: Peripheral) {
     const device = new Device("test", "3.4\" Market Monitor", false, peripheral.id);
     addDevice(device);
+    navigation.goBack();
   }
 
   useEffect(() => {

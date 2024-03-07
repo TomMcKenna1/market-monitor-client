@@ -7,8 +7,9 @@ import {
 import HomeScreen from './screens/HomeScreen';
 import AddDeviceScreen from './screens/AddDeviceScreen';
 
-import BleManager, {Peripheral} from 'react-native-ble-manager';
+import BleManager from 'react-native-ble-manager';
 import Device from './device.js';
+import EditDeviceScreen from './screens/EditDeviceScreen';
 
 const Stack = createNativeStackNavigator();
 BleManager.start({showAlert: false});
@@ -34,14 +35,16 @@ const App = () => {
           options={{title: 'Add Device', gestureDirection: 'vertical'}}>
           {props => <AddDeviceScreen {...props} addDevice={addDevice} />}
         </Stack.Screen>
+        <Stack.Screen name="EditDevice" options={{title: 'Edit Device'}} component={EditDeviceScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-type StackParamList = {
+export type StackParamList = {
   Home: {devices: Device[]};
   AddDevice: undefined;
+  EditDevice: {device: Device};
 };
 
 export type NavigationProps = NativeStackNavigationProp<StackParamList>;

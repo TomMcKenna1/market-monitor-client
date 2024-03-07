@@ -41,7 +41,14 @@ const HomeScreen = (props: HomeScreenProps) => {
               marginBottom: 40,
             }}>
             {devices.length > 0 ? (
-              devices.map((device: Device) => <DeviceButton device={device} />)
+              devices.map((device: Device) => (
+                <DeviceButton
+                  device={device}
+                  onPress={() =>
+                    navigation.navigate('EditDevice', {device: device})
+                  }
+                />
+              ))
             ) : (
               <Text style={styles.scrollInfoText}>No devices</Text>
             )}
