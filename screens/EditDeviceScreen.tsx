@@ -3,7 +3,6 @@ import {ActivityIndicator, SafeAreaView, View} from 'react-native';
 import {StackParamList} from '../App';
 import {Buffer} from 'buffer';
 
-import BleManager from 'react-native-ble-manager';
 import TextButton from '../components/TextButton';
 import {useState} from 'react';
 
@@ -14,19 +13,26 @@ const EditDeviceScreen = () => {
 
   async function connectToDevice(data: any) {
     setLoading(true);
-    await BleManager.connect(device.uuid);
     try {
-      await BleManager.retrieveServices(device.uuid);
-      await BleManager.write(
-        device.uuid,
-        'A07498CA-AD5B-474E-940D-16F1FBE7E8CD',
-        '664161df-1bae-4003-968f-5b5a6713cde4',
-        data,
-        800,
-      );
-      console.log('disconnecting...');
+      console.log('CONNECTING');
+      const connectedDevice = await device.interface.connect();
+      console.log('GET CHARACTERISTICS');
+      const connectedDeviceWithServices =
+        await connectedDevice.discoverAllServicesAndCharacteristics();
+      console.log('WRITE');
+      const characteristic =
+        await connectedDeviceWithServices.writeCharacteristicWithResponseForService(
+          'A07498CA-AD5B-474E-940D-16F1FBE7E8CD',
+          '664161df-1bae-4003-968f-5b5a6713cde4',
+          data,
+        );
+      console.log('WRITE DONE');
+      const disconnectedDevice =
+        await connectedDeviceWithServices.cancelConnection();
+      console.log('DISCONNECTED')
+    } catch (error) {
+      console.log(error);
     } finally {
-      await BleManager.disconnect(device.uuid);
       setLoading(false);
     }
   }
@@ -63,7 +69,7 @@ const EditDeviceScreen = () => {
               connectToDevice(
                 Buffer.from(
                   '{"assets": [{"ticker": "BTC-USD", "name": "BTC"}]}',
-                ).toJSON().data,
+                ).toString('base64'),
               )
             }
           />
@@ -73,7 +79,7 @@ const EditDeviceScreen = () => {
               connectToDevice(
                 Buffer.from(
                   '{"assets": [{"ticker": "^GSPC", "name": "S&P 500"}]}',
-                ).toJSON().data,
+                ).toString('base64'),
               )
             }
           />
@@ -83,7 +89,7 @@ const EditDeviceScreen = () => {
               connectToDevice(
                 Buffer.from(
                   '{"assets": [{"ticker": "GOOG"}, {"ticker": "AI"}, {"ticker": "META"}, {"ticker": "MNDY"}]}',
-                ).toJSON().data,
+                ).toString('base64'),
               )
             }
           />

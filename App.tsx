@@ -7,12 +7,14 @@ import {
 import HomeScreen from './screens/HomeScreen';
 import AddDeviceScreen from './screens/AddDeviceScreen';
 
-import BleManager from 'react-native-ble-manager';
 import Device from './device.js';
 import EditDeviceScreen from './screens/EditDeviceScreen';
 
+import { BleManager } from 'react-native-ble-plx'
+
+export const bleManager = new BleManager()
+
 const Stack = createNativeStackNavigator();
-BleManager.start({showAlert: false});
 
 const App = () => {
   const [devices, setDevices] = useState<Device[]>([]);

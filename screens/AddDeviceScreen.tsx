@@ -1,7 +1,5 @@
 import {
   ActivityIndicator,
-  NativeEventEmitter,
-  NativeModules,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
@@ -9,15 +7,13 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import BleManager, {Peripheral} from 'react-native-ble-manager';
 import {useEffect, useState} from 'react';
 import TextButton from '../components/TextButton.tsx';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProps} from '../App.tsx';
-import Device from '../device.js';
-
-const BleManagerModule = NativeModules.BleManager;
-const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+import {Device} from 'react-native-ble-plx';
+import _Device from '../device.js';
+import {bleManager} from '../App.tsx';
 
 interface AddDeviceScreenProps {
   addDevice: CallableFunction;
@@ -27,35 +23,26 @@ const AddDeviceScreen = (props: AddDeviceScreenProps) => {
   const {addDevice} = props;
   const navigation = useNavigation<NavigationProps>();
 
-  const [permissionsEnabled, setPermissionsEnabled] = useState(false);
+  const [permissionsEnabled, setPermissionsEnabled] = useState(true);
 
-  async function checkPermissions() {
-    if (Platform.OS === 'android' && Platform.Version >= 23) {
-      await BleManager.enableBluetooth();
-      setPermissionsEnabled(
-        await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        ),
-      );
-    } else {
-      setPermissionsEnabled(true);
-    }
-  }
-
-  function registerPeripheral(peripheral: Peripheral) {
-    const device = new Device("test", "3.4\" Market Monitor", false, peripheral.id);
-    addDevice(device);
+  function registerPeripheral(device: Device) {
+    const _device = new _Device(
+      'test',
+      '3.4" Market Monitor',
+      false,
+      device,
+    );
+    addDevice(_device);
     navigation.goBack();
   }
-
-  useEffect(() => {
-    checkPermissions();
-  }, []);
 
   return (
     <SafeAreaView style={{flex: 1}}>
       {permissionsEnabled ? (
-        <DeviceSearchPage navigation={navigation} onRegisterPeripheral={registerPeripheral}/>
+        <DeviceSearchPage
+          navigation={navigation}
+          onRegisterPeripheral={registerPeripheral}
+        />
       ) : (
         <LocationPermissionPage onNext={() => setPermissionsEnabled(true)} />
       )}
@@ -72,44 +59,27 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
   const {navigation, onRegisterPeripheral} = props;
 
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const [discoveredPeripherals, setDiscoveredPeripherals] = useState<
-    Peripheral[]
-  >([]);
+  const [discoveredPeripherals, setDiscoveredPeripherals] = useState<Device[]>(
+    [],
+  );
 
-  async function handleScanResult() {
-    BleManagerEmitter.removeAllListeners('BleManagerStopScan');
-
-    const _discoveredPeripherals = await BleManager.getDiscoveredPeripherals();
-    setDiscoveredPeripherals(
-      _discoveredPeripherals.filter(peripheral =>
-        peripheral.name?.includes('marketmonitor'),
-      ),
-    );
-  }
-
-  async function startScan() {
-    if (!isScanning) {
-      try {
-        await BleManager.scan([], 5, true);
-        console.log('Scanning...');
-        setIsScanning(true);
-      } catch (error) {
+  function startScan() {
+    setIsScanning(true);
+    bleManager.startDeviceScan(null, null, (error, device: Device | null) => {
+      if (error) {
         console.log(error);
+        return;
       }
-    }
-  }
-
-  async function findDevices() {
-    BleManagerEmitter.addListener('BleManagerStopScan', () => {
-      setIsScanning(false);
-      console.log('Scanning stopped');
-      handleScanResult();
+      if (device && device.name && device.name.includes('marketmonitor')) {
+        setDiscoveredPeripherals([...discoveredPeripherals, device]);
+        bleManager.stopDeviceScan();
+        setIsScanning(false);
+      }
     });
-    await startScan();
   }
 
   useEffect(() => {
-    findDevices();
+    startScan();
   }, []);
 
   return (
@@ -135,11 +105,11 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
         </>
       ) : discoveredPeripherals.length > 0 ? (
         <>
-          {discoveredPeripherals.map(peripheral => (
+          {discoveredPeripherals.map(device => (
             <TextButton
               text='3.4" Market Monitor'
               onPress={() => {
-                onRegisterPeripheral(peripheral);
+                onRegisterPeripheral(device);
               }}
             />
           ))}
@@ -157,7 +127,7 @@ const DeviceSearchPage = (props: DeviceSearchPageProps) => {
           <TextButton
             style={{width: '30%'}}
             text="Retry"
-            onPress={findDevices}
+            onPress={startScan}
           />
         </View>
       )}

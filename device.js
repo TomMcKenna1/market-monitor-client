@@ -1,9 +1,9 @@
 class Device {
-    constructor(name, type, connected, uuid) {
+    constructor(name, type, connected, deviceInterface) {
         this.name = name;
         this.type = type;
         this.connected = connected;
-        this.uuid = uuid;
+        this.interface = deviceInterface;
     }
 }
 
